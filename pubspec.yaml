@@ -1,7 +1,7 @@
 name: bioclock
 description: "BioClock - 生物制剂注射记录与提醒工具（纯本地 Flutter 版）"
 publish_to: 'none'
-version: 1.1.1+1
+version: 1.1.2+2
 
 environment:
   sdk: ^3.13.5

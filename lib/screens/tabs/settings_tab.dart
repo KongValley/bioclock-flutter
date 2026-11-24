@@ -14,6 +14,7 @@ import 'package:bioclock/import/spreadsheet_parser.dart';
 import 'package:bioclock/import/transfer_restore.dart';
 import 'package:bioclock/models/types.dart';
 import 'package:bioclock/notify/notify_scheduler.dart';
+import 'package:bioclock/screens/about_sheet.dart';
 import 'package:bioclock/screens/settings_sheets.dart';
 import 'package:bioclock/store/app_store.dart';
 import 'package:bioclock/ui/components/app_icon.dart';
@@ -62,7 +63,8 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<SettingsTab> {
-  String _appVersion = '1.0.0';
+  String _appVersion = '1.1.2';
+  String _buildNumber = '2';
   NotificationPermissionStatus? _permission;
   bool _checkingPermission = false;
   bool _busyExport = false;
@@ -84,7 +86,12 @@ class _SettingsTabState extends State<SettingsTab> {
     try {
       final info = await PackageInfo.fromPlatform();
       if (mounted && info.version.isNotEmpty) {
-        setState(() => _appVersion = info.version);
+        setState(() {
+          _appVersion = info.version;
+          if (info.buildNumber.isNotEmpty) {
+            _buildNumber = info.buildNumber;
+          }
+        });
       }
     } catch (_) {
       // 测试环境或非原生构建下保留默认版本号
@@ -1302,50 +1309,31 @@ class _SettingsTabState extends State<SettingsTab> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      SectionTitle(title: '关于与${Zh.disclaimer.title}'),
+                      SectionTitle(title: Zh.settings.aboutSection),
                       const SizedBox(height: 10),
                       AppCard(
+                        padding: false,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'BioClock v$_appVersion',
-                                  style: TextStyle(
-                                    color: theme.colors.text,
-                                    fontSize: theme.fontSize.md,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                Text(
-                                  '100% 本地离线',
-                                  style: TextStyle(
-                                    color: theme.colors.primary,
-                                    fontSize: theme.fontSize.xs,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (acceptedRaw != null) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                '${Zh.disclaimer.acceptedAt}：${formatDateTime(acceptedRaw)}',
-                                style: TextStyle(
-                                  color: theme.colors.textTertiary,
-                                  fontSize: theme.fontSize.xs,
-                                ),
+                            SettingRow(
+                              label: '关于 BioClock',
+                              hint: '作者 宁波猪猪侠 · 功能介绍、本机数据与开源许可',
+                              value: 'v$_appVersion',
+                              onTap: () => showAboutBioClockSheet(
+                                context,
+                                appVersion: _appVersion,
+                                buildNumber: _buildNumber,
                               ),
-                            ],
-                            const SizedBox(height: 12),
-                            Text(
-                              Zh.disclaimer.body,
-                              style: TextStyle(
-                                color: theme.colors.textSecondary,
-                                fontSize: theme.fontSize.sm,
-                                height: 1.55,
+                            ),
+                            SettingRow(
+                              label: '免责声明与隐私说明',
+                              hint: acceptedRaw != null
+                                  ? '${Zh.disclaimer.acceptedAt}：${formatDateTime(acceptedRaw)}'
+                                  : Zh.disclaimer.short,
+                              last: true,
+                              onTap: () => showDisclaimerSheet(
+                                context,
+                                acceptedAt: acceptedRaw,
                               ),
                             ),
                           ],

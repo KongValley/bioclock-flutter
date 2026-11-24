@@ -21,6 +21,7 @@ enum AppIconName {
   list,
   settings,
   alert,
+  info,
   inbox,
   trash,
 }
@@ -247,6 +248,10 @@ class _AppIconPainter extends CustomPainter {
         canvas.drawCircle(const Offset(12, 12), 10, strokePaint);
         canvas.drawLine(const Offset(12, 8), const Offset(12, 12), strokePaint);
         canvas.drawCircle(const Offset(12, 16), 1.1, fillPaint);
+      case AppIconName.info:
+        canvas.drawCircle(const Offset(12, 12), 10, strokePaint);
+        canvas.drawLine(const Offset(12, 11), const Offset(12, 16), strokePaint);
+        canvas.drawCircle(const Offset(12, 8), 1.1, fillPaint);
       case AppIconName.inbox:
         final tray = Path()
           ..moveTo(22, 12)
