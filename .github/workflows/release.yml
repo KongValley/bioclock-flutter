@@ -82,9 +82,14 @@ jobs:
 
       - name: Build Windows Release
         shell: pwsh
+        env:
+          CL: /D_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS
         run: |
+          $ErrorActionPreference = 'Stop'
           flutter pub get
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           flutter build windows --release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           New-Item -ItemType Directory -Force dist | Out-Null
           Compress-Archive `
             -Path "build\windows\x64\runner\Release\*" `
